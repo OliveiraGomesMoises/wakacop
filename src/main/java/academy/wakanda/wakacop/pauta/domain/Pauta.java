@@ -16,6 +16,6 @@ public class Pauta {
     private UUID id;
     private String titulo;
     private String descricao;
-    private UUID idAssociadoAuto;
+    private UUID idAssociadoAutor;
     private LocalDateTime dataCriacao;
 }
