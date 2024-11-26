@@ -1,12 +1,11 @@
 package academy.wakanda.wakacop.pauta.application.api;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public interface PautaAPI {
+     @ResponseStatus(HttpStatus.CREATED)
      @PostMapping
      PautaCadastradaResponse cadastraPauta(@RequestBody NovaPautaRequest novaPautaRequest);
 
