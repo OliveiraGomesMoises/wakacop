@@ -10,7 +10,7 @@ import java.util.UUID;
 @ToString
 public class SessaoAberturaRequest {
     @NotNull
-    private UUID pauta;
+    private UUID idPauta;
     private Integer tempoDuracao;
 
     public Optional<Integer> getTempoduracao(){
