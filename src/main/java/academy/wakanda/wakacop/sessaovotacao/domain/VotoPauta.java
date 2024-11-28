@@ -19,7 +19,7 @@ public class VotoPauta {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false, unique = true, nullable = false)
     private UUID id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sessao- votacao-id")
     private SessaoVotacao sessaoVotacao;
     private String cpfAssociado;
@@ -31,5 +31,9 @@ public class VotoPauta {
         this.cpfAssociado = votoRequest.getCpfAssociado();
         this.opcaoVoto = votoRequest.getOpcao();
         this.momentoVoto = LocalDateTime.now();
+    }
+
+    public UUID getIdSessao() {
+        return this.sessaoVotacao.getId();
     }
 }
