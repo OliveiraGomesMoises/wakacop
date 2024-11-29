@@ -1,6 +1,7 @@
 package academy.wakanda.wakacop.sessaovotacao.domain;
 
 import academy.wakanda.wakacop.pauta.domain.Pauta;
+import academy.wakanda.wakacop.sessaovotacao.application.api.ResultadoSessaoResponse;
 import academy.wakanda.wakacop.sessaovotacao.application.api.SessaoAberturaRequest;
 import academy.wakanda.wakacop.sessaovotacao.application.api.VotoRequest;
 import jakarta.persistence.*;
@@ -43,31 +44,36 @@ public class SessaoVotacao {
         this.votos = new HashMap<>();
     }
 
+    public ResultadoSessaoResponse obtemResultado() {
+        atualizStatus();
+        return new ResultadoSessaoResponse(this);
+    }
+
+
     public VotoPauta recebeVoto(VotoRequest votoRequest) {
         validaSessaoAberta();
         validaAssociado(votoRequest.getCpfAssociado());
         VotoPauta voto = new VotoPauta(this, votoRequest);
-        votos.put(votoRequest.getCpfAssociado(),voto );
+        votos.put(votoRequest.getCpfAssociado(), voto);
         return voto;
     }
 
     private void validaSessaoAberta() {
-        if (this.status.equals(StatusSessaoVotacao.FECHADA)){
-            throw  new RuntimeException("Sessão Está Fechada!");
+        if (this.status.equals(StatusSessaoVotacao.FECHADA)) {
+            throw new RuntimeException("Sessão Está Fechada!");
         }
     }
 
     private void validaAssociado(String cpfAssociado) {
         atualizStatus();
-        if (this.votos.containsKey(cpfAssociado))
-        {
-            new RuntimeException("Associado ja Votou Nessa Sessão.");
+        if (this.votos.containsKey(cpfAssociado)) {
+           throw  new RuntimeException("Associado ja Votou Nessa Sessão.");
         }
     }
 
     private void atualizStatus() {
-        if (this.status.equals(StatusSessaoVotacao.ABERTA)){
-            if (LocalDateTime.now().isAfter(this.momentoEncerramento)){
+        if (this.status.equals(StatusSessaoVotacao.ABERTA)) {
+            if (LocalDateTime.now().isAfter(this.momentoEncerramento)) {
                 fechaSessao();
             }
         }
@@ -76,5 +82,26 @@ public class SessaoVotacao {
     private void fechaSessao() {
         this.status = StatusSessaoVotacao.FECHADA;
     }
-}
+
+    public Long getTotalVotos() {
+        return Long.valueOf(this.votos.size());
+    }
+
+    public Long getTotalSim() {
+        return calculaVotosPorOpcao(OpcaoVoto.SIM);
+
+    }
+    public Long getTotalNao() {
+        return calculaVotosPorOpcao(OpcaoVoto.NAO);
+    }
+
+
+    private Long calculaVotosPorOpcao(OpcaoVoto opcao ) {
+        return votos.values().stream()
+                .filter(voto -> voto.opcaoIgual(opcao))
+                .count();
+    }
+
+    }
+
 
