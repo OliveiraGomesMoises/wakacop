@@ -1,5 +1,6 @@
 package academy.wakanda.wakacop.sessaovotacao.application.service;
 
+import academy.wakanda.wakacop.associado.application.service.AssociadoService;
 import academy.wakanda.wakacop.pauta.application.service.PautaService;
 import academy.wakanda.wakacop.pauta.domain.Pauta;
 import academy.wakanda.wakacop.sessaovotacao.application.api.*;
@@ -7,6 +8,7 @@ import academy.wakanda.wakacop.sessaovotacao.domain.SessaoVotacao;
 import academy.wakanda.wakacop.sessaovotacao.domain.VotoPauta;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,6 +19,7 @@ import java.util.UUID;
 public class SessaoVotacaoApplicationService implements SessaoVotacaoService {
     private final SessaoVotacaoRepository sessaoVotacaoRepository;
     private final PautaService pautaService;
+    private final AssociadoService associadoService;
 
     @Override
     public SessaoAberturaResponse abreSessao(SessaoAberturaRequest sessaoAberturaRequest) {
