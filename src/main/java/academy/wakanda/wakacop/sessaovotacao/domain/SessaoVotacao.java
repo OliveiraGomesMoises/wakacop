@@ -38,7 +38,7 @@ public class SessaoVotacao {
 
     public SessaoVotacao(SessaoAberturaRequest sessaoAberturaRequest, Pauta pauta) {
         this.idPauta = pauta.getId();
-        this.tempoDuracao = sessaoAberturaRequest.getTempoduracao().orElse(1);
+        this.tempoDuracao = sessaoAberturaRequest.getTempoduracao().orElse(5);
         this.momentoAbertura = LocalDateTime.now();
         this.momentoEncerramento = momentoAbertura.plusMinutes(this.getTempoDuracao());
         this.status = StatusSessaoVotacao.ABERTA;
@@ -60,6 +60,7 @@ public class SessaoVotacao {
     }
 
     private void validaSessaoAberta() {
+        atualizStatus();
         if (this.status.equals(StatusSessaoVotacao.FECHADA)) {
             throw new RuntimeException("Sessão Está Fechada!");
         }
