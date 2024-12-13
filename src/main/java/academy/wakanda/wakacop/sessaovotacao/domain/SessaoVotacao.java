@@ -38,29 +38,29 @@ public class SessaoVotacao {
 
     public SessaoVotacao(SessaoAberturaRequest sessaoAberturaRequest, Pauta pauta) {
         this.idPauta = pauta.getId();
-        this.tempoDuracao = sessaoAberturaRequest.getTempoduracao().orElse(5);
+        this.tempoDuracao = sessaoAberturaRequest.getTempoduracao().orElse(1);
         this.momentoAbertura = LocalDateTime.now();
         this.momentoEncerramento = momentoAbertura.plusMinutes(this.getTempoDuracao());
         this.status = StatusSessaoVotacao.ABERTA;
         this.votos = new HashMap<>();
     }
 
-    public ResultadoSessaoResponse obtemResultado() {
-        atualizStatus();
+    public ResultadoSessaoResponse obtemResultado(PublicadorResultadoSessao publicadorResultadoSessao) {
+        atualizStatus(publicadorResultadoSessao);
         return new ResultadoSessaoResponse(this);
     }
 
 
-    public VotoPauta recebeVoto(VotoRequest votoRequest, AssociadoService associadoService) {
-        validaSessaoAberta();
+    public VotoPauta recebeVoto(VotoRequest votoRequest, AssociadoService associadoService, PublicadorResultadoSessao publicadorResultadoSessao) {
+        validaSessaoAberta(publicadorResultadoSessao);
         validaAssociado(votoRequest.getCpfAssociado(),associadoService);
         VotoPauta voto = new VotoPauta(this, votoRequest);
         votos.put(votoRequest.getCpfAssociado(), voto);
         return voto;
     }
 
-    private void validaSessaoAberta() {
-        atualizStatus();
+    private void validaSessaoAberta(PublicadorResultadoSessao publicadorResultadoSessao) {
+        atualizStatus(publicadorResultadoSessao);
         if (this.status.equals(StatusSessaoVotacao.FECHADA)) {
             throw new RuntimeException("Sessão Está Fechada!");
         }
@@ -77,16 +77,17 @@ public class SessaoVotacao {
         }
     }
 
-    private void atualizStatus() {
+    private void atualizStatus(PublicadorResultadoSessao publicadorResultadoSessao) {
         if (this.status.equals(StatusSessaoVotacao.ABERTA)) {
             if (LocalDateTime.now().isAfter(this.momentoEncerramento)) {
-                fechaSessao();
+                fechaSessao(publicadorResultadoSessao);
             }
         }
     }
 
-    private void fechaSessao() {
+    private void fechaSessao(PublicadorResultadoSessao publicadorResultadoSessao) {
         this.status = StatusSessaoVotacao.FECHADA;
+        publicadorResultadoSessao.publica(new ResultadoSessaoResponse(this));
     }
 
     public Long getTotalVotos() {
