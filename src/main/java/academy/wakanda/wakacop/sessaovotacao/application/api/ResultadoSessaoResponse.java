@@ -21,7 +21,7 @@ public class ResultadoSessaoResponse {
     private Long totalNao;
 
     public ResultadoSessaoResponse(SessaoVotacao sessao) {
-        this.id = sessao.getId();
+        this.idSesao = sessao.getId();
         this.idPauta = sessao.getIdPauta();
         this.status = sessao.getStatus();
         this.momentoAbertura = sessao.getMomentoAbertura();
